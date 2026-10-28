@@ -9,6 +9,10 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+import { updateInvoice, type UpdateState } from '@/app/lib/actions';
+import { useActionState } from 'react';
+
+
 
 export default function EditInvoiceForm({
   invoice,
@@ -17,8 +21,12 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
+
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+  const initialState: UpdateState = { message: null };
+  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   return (
-    <form>
+    <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -109,6 +117,11 @@ export default function EditInvoiceForm({
           </div>
         </fieldset>
       </div>
+      {state.message ? (
+        <p className="mt-4 text-sm text-red-500" aria-live="polite">
+          {state.message}
+        </p>
+      ) : null}
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard/invoices"
